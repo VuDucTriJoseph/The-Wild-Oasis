@@ -10,22 +10,17 @@ import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
 
-import { createEditCabin } from "../../services/apiCabins";
+import { createCabin } from "../../services/apiCabins";
 
-function CreateCabinForm({ cabinToEdit = {} }) {
-  const { id: editID, ...editValue } = cabinToEdit;
-  const isEdit = Boolean(editID);
-
-  const { register, handleSubmit, reset, getValues, formState } = useForm({
-    defaultValues: isEdit ? editValue : {},
-  });
+function CreateCabinForm() {
+  const { register, handleSubmit, reset, getValues, formState } = useForm();
 
   const { errors } = formState;
   // if (errors) console.log(errors);
   const queryClient = useQueryClient();
 
   const { mutate, isLoading: isNewCabinCreating } = useMutation({
-    mutationFn: createEditCabin,
+    mutationFn: createCabin,
     onSuccess: () => {
       toast.success("New cabin successfully created");
       queryClient.invalidateQueries({ queryKey: ["cabins"] });
@@ -117,7 +112,7 @@ function CreateCabinForm({ cabinToEdit = {} }) {
           id="image"
           accept="image/*"
           disabled={isNewCabinCreating}
-          {...register("image", { required: isEdit ? false : "This field is required" })}
+          {...register("image", { required: "This field is required" })}
         />
       </FormRow>
 
@@ -126,7 +121,7 @@ function CreateCabinForm({ cabinToEdit = {} }) {
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button disabled={isNewCabinCreating}>{isEdit ? "Edit cabin" : "Create new cabin"}</Button>
+        <Button disabled={isNewCabinCreating}>Add cabin</Button>
       </FormRow>
     </Form>
   );
